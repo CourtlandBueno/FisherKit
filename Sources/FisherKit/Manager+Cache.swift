@@ -119,6 +119,7 @@ extension FisherKitManager {
             let ioQueueName = "com.courtlandbueno.FisherKit.Cache.ioQueue.\(UUID().uuidString)"
             ioQueue = DispatchQueue(label: ioQueueName)
             
+            #if !os(Linux)
             let notifications: [(Notification.Name, Selector)]
             #if os(iOS)
             #if swift(>=4.2)
@@ -144,6 +145,7 @@ extension FisherKitManager {
             notifications.forEach {
                 NotificationCenter.default.addObserver(self, selector: $0.1, name: $0.0, object: nil)
             }
+            #endif
         }
         
         /// Creates an `Cache<Item>` with a given `name`. Both `MemoryStorage` and `DiskStorage` will be created
