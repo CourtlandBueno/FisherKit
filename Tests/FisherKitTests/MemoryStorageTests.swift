@@ -205,4 +205,18 @@ class MemoryStorageTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+    
+    static var allTests = [
+        ("testConfigSettingStorage", testConfigSettingStorage),
+        ("testStoreAndGetValue", testStoreAndGetValue),
+        ("testStoreValueOverwritting", testStoreValueOverwritting),
+        ("testRemoveValue", testRemoveValue),
+        ("testRemoveAllValues", testRemoveAllValues),
+        ("testStoreWithExpiration", testStoreWithExpiration),
+        ("testStoreWithConfigExpiration", testStoreWithConfigExpiration),
+        ("testRemoveExpired", testRemoveExpired),
+        ("testExtendExpirationByAccessing", testExtendExpirationByAccessing),
+        ("testAutoCleanExpiredMemory", testAutoCleanExpiredMemory),
+        ("testStorageObject", testStorageObject)
+    ]
 }

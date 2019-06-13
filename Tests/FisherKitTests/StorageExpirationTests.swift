@@ -55,4 +55,12 @@ class StorageExpirationTests: XCTestCase {
         XCTAssertTrue(e.isExpired)
         XCTAssertEqual(e.estimatedExpirationSinceNow, .distantPast)
     }
+    
+    static var allTests = [
+        ("testExpirationNever", testExpirationNever),
+        ("testExpirationSeconds", testExpirationSeconds),
+        ("testExpirationDays", testExpirationDays),
+        ("testExpirationDate", testExpirationDate),
+        ("testAlreadyExpired", testAlreadyExpired),
+    ]
 }

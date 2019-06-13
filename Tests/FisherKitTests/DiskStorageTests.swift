@@ -156,5 +156,18 @@ class DiskStorageTests: XCTestCase {
         XCTAssertTrue(ordered[0].lastAccessDate! > ordered[1].lastAccessDate!)
         XCTAssertTrue(ordered[1].lastAccessDate! > ordered[2].lastAccessDate!)
     }
+    
+    static var allTests = [
+        ("testStoreAndGet", testStoreAndGet),
+        ("testRemove", testRemove),
+        ("testRemoveAll", testRemoveAll),
+        ("testTotalSize", testTotalSize),
+        ("testSetExpiration", testSetExpiration),
+        ("testConfigExpiration", testConfigExpiration),
+        ("testExtendExpirationByAccessing", testExtendExpirationByAccessing),
+        ("testRemoveExpired", testRemoveExpired),
+        ("testRemoveSizeExceeded", testRemoveSizeExceeded),
+        ("testFileMetaOrder", testFileMetaOrder),
+    ]
 
 }

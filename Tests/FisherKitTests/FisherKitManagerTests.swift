@@ -89,5 +89,8 @@ class FisherKitManagerTests: XCTestCase {
         super.tearDown()
     }
     
-    
+    static var allTests = [
+        ("testManagerInitializaationWithDefaultItem", testManagerInitializaationWithDefaultItem),
+        ("testManagerInitilizationWithCodableItem", testManagerInitilizationWithCodableItem)
+    ]
 }

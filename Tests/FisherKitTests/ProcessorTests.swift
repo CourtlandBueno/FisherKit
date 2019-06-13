@@ -51,6 +51,5 @@ class ProcessorTests: XCTestCase {
         manager = nil
         super.tearDown()
     }
-    
-
+    static var allTests: [(String, (FisherKitTests) -> () -> ())] = []
 }
