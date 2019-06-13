@@ -25,7 +25,16 @@
 //  THE SOFTWARE.
 
 import Foundation
+#if os(Linux)
 
+func getAssociatedObject<T>(_ object: Any, _ key: UnsafeRawPointer) -> T? {
+    fatalError()
+}
+
+func setRetainedAssociatedObject<T>(_ object: Any, _ key: UnsafeRawPointer, _ value: T) {
+    fatalError()
+}
+#else
 func getAssociatedObject<T>(_ object: Any, _ key: UnsafeRawPointer) -> T? {
     return objc_getAssociatedObject(object, key) as? T
 }
@@ -33,3 +42,5 @@ func getAssociatedObject<T>(_ object: Any, _ key: UnsafeRawPointer) -> T? {
 func setRetainedAssociatedObject<T>(_ object: Any, _ key: UnsafeRawPointer, _ value: T) {
     objc_setAssociatedObject(object, key, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 }
+#endif
+

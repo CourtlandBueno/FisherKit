@@ -25,10 +25,10 @@
 //  THE SOFTWARE.
 
 import Foundation
+extension String: FisherKitCompatibleValue { }
 #if canImport(CommonCrypto)
 import CommonCrypto
 
-extension String: FisherKitCompatibleValue { }
 extension FisherKitWrapper where Base == String {
     var md5: String {
         guard let data = base.data(using: .utf8) else {
