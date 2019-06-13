@@ -4,11 +4,11 @@
 //
 //  Created by Courtland Bueno on 3/12/19.
 //
-
 import XCTest
 @testable import FisherKit
 
 class DataProviderTests: XCTestCase {
+    #if !os(Linux)
 
     func testLocalFileDataProvider() {
         let fm = FileManager.default
@@ -42,6 +42,12 @@ class DataProviderTests: XCTestCase {
         
         XCTAssertTrue(syncCalled)
     }
+    static var allTests = [
+        ("testLocalFileDataProvider", testLocalFileDataProvider),
+        ("testBase64DataProvider", testBase64DataProvider)
+    ]
+    #else
+    static var allTests: [(String, (FisherKitTests) -> () -> ())] = []
+    #endif
     
-
 }

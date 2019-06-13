@@ -4,11 +4,11 @@
 //
 //  Created by Courtland Bueno on 3/12/19.
 //
-#if !os(Linux)
 import XCTest
 @testable import FisherKit
 
 class ImageDrawingTests: XCTestCase {
+    #if !os(Linux)
     
     func testImageResizing() {
         let result = testImage.fk.resize(to: CGSize(width: 20, height: 20))
@@ -32,5 +32,13 @@ class ImageDrawingTests: XCTestCase {
         XCTAssertEqual(result.size.height, testImage.size.height / 2)
         #endif
     }
+    static var allTests = [
+        ("testImageResizing", testImageResizing),
+        ("testImageCropping", testImageCropping),
+        ("testImageScaling", testImageScaling)
+    ]
+    #else
+    static var allTests: [(String, (FisherKitTests) -> () -> ())] = []
+    #endif
+    
 }
-#endif
