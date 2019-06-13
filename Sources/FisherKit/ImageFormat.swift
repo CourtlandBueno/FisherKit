@@ -23,7 +23,7 @@
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
-
+#if !os(Linux)
 import Foundation
 
 /// Represents image format.
@@ -76,3 +76,4 @@ extension FisherKitWrapper where Base == Data {
         return .unknown
     }
 }
+#endif

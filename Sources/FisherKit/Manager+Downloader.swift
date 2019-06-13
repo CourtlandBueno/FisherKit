@@ -5,7 +5,7 @@
 //  Created by Courtland Bueno on 3/6/19.
 //
 
-
+import Foundation
 #if canImport(AppKit)
 import AppKit
 #elseif canImport(UIKit)

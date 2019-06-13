@@ -25,6 +25,7 @@
 //  THE SOFTWARE.
 
 import Foundation
+#if canImport(CommonCrypto)
 import CommonCrypto
 
 extension String: FisherKitCompatibleValue { }
@@ -47,3 +48,4 @@ extension FisherKitWrapper where Base == String {
         return digest.map { String(format: "%02x", $0) }.joined()
     }
 }
+#endif

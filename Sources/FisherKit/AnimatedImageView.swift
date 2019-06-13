@@ -30,6 +30,7 @@
 //
 //  The name and characters used in the demo of this software are property of their
 //  respective owners.
+#if !os(Linux)
 #if canImport(UIKit)
 import UIKit
 import ImageIO
@@ -556,4 +557,5 @@ extension Array {
         return indices ~= index ? self[index] : nil
     }
 }
+#endif
 #endif
