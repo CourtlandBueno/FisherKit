@@ -48,8 +48,8 @@ extension FisherKitWrapper where Base == String {
         return digest.map { String(format: "%02x", $0) }.joined()
     }
 }
-#elseif canImport(glibc)
-import glibc
+#elseif os(Linux)
+//import glibc
 extension FisherKitWrapper where Base == String {
     var md5: String {
 //        guard let data = base.data(using: .utf8) else {

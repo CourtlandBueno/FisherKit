@@ -70,6 +70,7 @@ extension AuthenticationChallengeResponsable {
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
     {
+        #if !os(Linux)
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
             if let trustedHosts = downloader.trustedHosts, trustedHosts.contains(challenge.protectionSpace.host) {
                 let credential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
@@ -77,7 +78,7 @@ extension AuthenticationChallengeResponsable {
                 return
             }
         }
-
+        #endif
         completionHandler(.performDefaultHandling, nil)
     }
 
