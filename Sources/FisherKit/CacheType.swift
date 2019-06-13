@@ -24,9 +24,9 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(macOS)
+#if canImport(AppKit)
 import AppKit
-#else
+#elseif canImport(UIKit)
 import UIKit
 #endif
 
@@ -94,7 +94,7 @@ extension Dictionary {
     }
 }
 
-#if !os(macOS) && !os(watchOS)
+#if os(iOS)
 // MARK: - For App Extensions
 extension UIApplication: FisherKitCompatible { }
 extension FisherKitWrapper where Base: UIApplication {
