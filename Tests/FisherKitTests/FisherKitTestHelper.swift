@@ -7,6 +7,7 @@
 
 import Foundation
 @testable import FisherKit
+#if canImport(CoreGraphics)
 import CoreGraphics
 
 let testImageString =
@@ -66,7 +67,7 @@ let testKeys = [
 ]
 
 let testURLs = testKeys.map { URL(string: $0)! }
-
+#endif
 func cleanDefaultCache<Item: FisherKitItemType>(_ manager: FisherKitManager<Item>) {
     let cache = manager.cache
     cache.clearMemoryCache()

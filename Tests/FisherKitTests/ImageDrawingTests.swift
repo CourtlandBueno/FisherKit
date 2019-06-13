@@ -4,7 +4,7 @@
 //
 //  Created by Courtland Bueno on 3/12/19.
 //
-
+#if !os(Linux)
 import XCTest
 @testable import FisherKit
 
@@ -33,3 +33,4 @@ class ImageDrawingTests: XCTestCase {
         #endif
     }
 }
+#endif
