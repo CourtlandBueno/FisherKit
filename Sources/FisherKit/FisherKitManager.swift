@@ -454,14 +454,3 @@ extension FisherKitManager where Item: Codable {
         
     }
 }
-
-extension FisherKitManager where Item == Image {
-    public convenience init() {
-        self.init(downloader: .default, cache: .default)
-        
-        self.defaultOptions += [
-            .processor(FisherKitManager.defaultProcessor),
-            .cacheSerializer(FisherKitManager.defaultSerializer)
-        ]
-    }
-}

@@ -120,7 +120,7 @@ extension FisherKitManager {
             ioQueue = DispatchQueue(label: ioQueueName)
             
             let notifications: [(Notification.Name, Selector)]
-            #if !os(macOS) && !os(watchOS)
+            #if os(iOS)
             #if swift(>=4.2)
             notifications = [
                 (UIApplication.didReceiveMemoryWarningNotification, #selector(clearMemoryCache)),
@@ -589,7 +589,7 @@ extension FisherKitManager {
             }
         }
         
-        #if !os(macOS) && !os(watchOS)
+        #if os(ios)
         /// Clears the expired items from disk storage when app is in background. This is an async operation.
         /// In most cases, you should not call this method explicitly.
         /// It will be called automatically when `UIApplicationDidEnterBackgroundNotification` received.

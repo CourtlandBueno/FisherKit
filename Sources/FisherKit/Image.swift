@@ -324,4 +324,17 @@ extension FisherKitWrapper where Base: Image {
         return FisherKitWrapper.image(cgImage: downsampledImage, scale: scale, refImage: nil)
     }
 }
+
+
+extension FisherKitManager where Item == Image {
+    public convenience init() {
+        self.init(downloader: .default, cache: .default)
+        
+        self.defaultOptions += [
+            .processor(FisherKitManager.defaultProcessor),
+            .cacheSerializer(FisherKitManager.defaultSerializer)
+        ]
+    }
+}
+
 #endif
