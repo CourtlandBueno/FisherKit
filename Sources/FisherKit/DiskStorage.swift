@@ -28,19 +28,6 @@ import Foundation
 #if os(Linux)
 import ShellOut
 #endif
-public protocol CodableEncoder {
-    func encode<T: Encodable>(_ value: T) throws -> Data
-}
-
-public protocol CodableDecoder {
-    func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T
-}
-
-extension PropertyListEncoder: CodableEncoder { }
-extension PropertyListDecoder: CodableDecoder { }
-
-extension JSONEncoder: CodableEncoder { }
-extension JSONDecoder: CodableDecoder { }
 
 /// Represents a set of conception related to storage which stores a certain type of value in disk.
 /// This is a namespace for the disk storage types. A `Backend` with a certain `Config` will be used to describe the

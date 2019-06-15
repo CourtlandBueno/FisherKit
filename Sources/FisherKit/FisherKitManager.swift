@@ -420,15 +420,3 @@ public final class FisherKitManager<Item: FisherKitItemType>: ItemBound {
 
     }
 }
-
-extension FisherKitManager where Item: Codable {
-    public convenience init(encoder: String = "PropertyListEncoder", decoder: String = "PropertyListDecoder") {
-        self.init(downloader: .default, cache: .default)
-        self.defaultOptions = [
-            .processor(FisherKitManager.defaultProcessor),
-            .cacheSerializer(FisherKitManager.defaultSerializer),
-            .dataProcessingInfo(["encoder": encoder, "decoder" : decoder])
-        ]
-        
-    }
-}

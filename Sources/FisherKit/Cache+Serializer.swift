@@ -74,22 +74,23 @@ extension FisherKitManager: DefaultSerializerProvider where Item: Codable {
             identifier: "codable",
             serialization: { (item, originalData, options) -> Data? in
             switch options.encoder {
-            case "JSONEncoder":
-               return try? JSONEncoder().encode(item)
             case "PropertyListEncoder":
+                return try? PropertyListEncoder().encode(item)
+            case "JSONEncoder":
                 fallthrough
             default:
-                return try? PropertyListEncoder().encode(item)
+                return try? JSONEncoder().encode(item)
             }
             
         }, deserialization: { data, options -> Item? in
             switch options.decoder {
-            case "JSONDecoder":
-                return try? JSONDecoder().decode(Item.self, from: data)
             case "PropertyListDecoder":
+                return try? PropertyListDecoder().decode(Item.self, from: data)
+            case "JSONDecoder":
                 fallthrough
             default:
-                return try? PropertyListDecoder().decode(Item.self, from: data)
+                return try? JSONDecoder().decode(Item.self, from: data)
+                
             }
         })
     }
