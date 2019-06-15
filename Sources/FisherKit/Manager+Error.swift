@@ -370,7 +370,7 @@ extension FisherKitManager {
         
         /// The error domain of `FisherKitError`. All errors from FisherKit is under this domain.
         public static var domain: String {
-            return "com.courtlandbueno.FisherKit.Error"
+            return identifierPrefix + "Error"
         }
         
         /// The error code within the given domain.

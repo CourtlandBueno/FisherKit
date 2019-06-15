@@ -8,32 +8,6 @@
 import XCTest
 @testable import FisherKit
 
-extension String: FisherKitItemType {
-    public static var itemTypeDescription: String {
-        return "string"
-    }
-    
-    public var cacheCost: Int {
-        return 8 * count
-    }
-}
-
-extension String: DataTransformable {
-    public func toData() throws -> Data {
-        return self.data(using: .utf8)!
-    }
-    
-    public static func fromData(_ data: Data) throws -> String {
-        return String(data: data, encoding: .utf8)!
-    }
-    
-    public static var empty: String {
-        return ""
-    }
-    
-    
-}
-
 class ProcessorTests: XCTestCase {
     
     var manager: FisherKitManager<String>!

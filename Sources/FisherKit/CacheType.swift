@@ -40,11 +40,11 @@ extension Notification.Name {
     /// `FisherKitDiskCacheCleanedHashKey` key in `userInfo` of the notification object you received.
     /// By checking the array, you could know the hash codes of files are removed.
     public static let FisherKitDidCleanDiskCache =
-        Notification.Name("com.courtlandbueno.FisherKit.FisherKitDidCleanDiskCache")
+        Notification.Name(identifierPrefix + "FisherKitDidCleanDiskCache")
 }
 
 /// Key for array of cleaned hashes in `userInfo` of `FisherKitDidCleanDiskCacheNotification`.
-public let FisherKitDiskCacheCleanedHashKey = "com.courtlandbueno.FisherKit.cleanedHash"
+public let FisherKitDiskCacheCleanedHashKey = identifierPrefix + "cleanedHash"
 
 /// Cache type of a cached item.
 /// - none: The item is not cached yet when retrieving it.
@@ -66,12 +66,6 @@ public enum CacheType {
         }
     }
 }
-
-//
-//extension Item: CacheCostCalculable {
-//    /// Cost of an item
-//    public var cacheCost: Int { return 1000 }
-//}
 
 extension Data: DataTransformable {
     public func toData() throws -> Data {

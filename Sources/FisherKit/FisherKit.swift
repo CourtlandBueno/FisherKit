@@ -66,3 +66,5 @@ extension FisherKitWrapper {
         return base
     }
 }
+
+let identifierPrefix = "com.courtlandbueno.FisherKit."

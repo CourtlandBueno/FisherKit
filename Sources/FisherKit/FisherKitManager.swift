@@ -27,28 +27,6 @@
 
 import Foundation
 
-public protocol FisherKitItemType: CacheCostCalculable, FisherKitCompatible {
-    static var itemTypeDescription: String { get }
-}
-
-extension FisherKitItemType {
-    public var cacheCost: Int {
-        return 0
-    }
-}
-
-public protocol ItemBound {
-    associatedtype Item: FisherKitItemType
-    
-    static var itemType: Item.Type { get }
-}
-
-extension ItemBound {
-    public static var itemType: Item.Type {
-        return Item.self
-    }
-}
-
 /// The downloading progress block type.
 /// The parameter value is the `receivedSize` of current response.
 /// The second parameter is the total expected data length from response's "Content-Length" header.
@@ -112,7 +90,7 @@ public final class FisherKitManager<Item: FisherKitItemType>: ItemBound {
         self.downloader = downloader
         self.cache = cache
         
-        let processQueueName = "com.courtlandbueno.FisherKit.Manager.processQueue.\(UUID().uuidString)"
+        let processQueueName = identifierPrefix + "Manager.processQueue.\(UUID().uuidString)"
         processingQueue = .dispatch(DispatchQueue(label: processQueueName))
     }
     

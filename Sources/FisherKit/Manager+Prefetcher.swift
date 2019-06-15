@@ -30,7 +30,7 @@ public typealias PrefetcherCompletionHandler =
 public typealias PrefetcherSourceCompletionHandler =
     ((_ skippedSources: [Source], _ failedSources: [Source], _ completedSources: [Source]) -> Void)
 
-fileprivate let requestingQueue = DispatchQueue(label: "com.courtlandbueno.FisherKit.Prefetcher.requestingQueue")
+fileprivate let requestingQueue = DispatchQueue(label: identifierPrefix + "Prefetcher.requestingQueue")
 
 extension FisherKitManager {
     /// `ItemPrefetcher` represents a downloading manager for requesting many items via URLs, then caching them.
@@ -68,7 +68,7 @@ extension FisherKitManager {
         // A manager used for prefetching. We will use the helper methods in manager.
         private let manager: FisherKitManager<Item>
         
-        private let pretchQueue = DispatchQueue(label: "com.courtlandbueno.FisherKit.Prefetcher.pretchQueue")
+        private let pretchQueue = DispatchQueue(label: identifierPrefix + "Prefetcher.pretchQueue")
         
         
         private var finished: Bool {

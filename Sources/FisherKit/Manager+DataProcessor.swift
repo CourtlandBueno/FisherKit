@@ -27,7 +27,7 @@
 import Foundation
 
 private let sharedProcessingQueue: CallbackQueue =
-    .dispatch(DispatchQueue(label: "com.courtlandbueno.FisherKit.Downloader.Process"))
+    .dispatch(DispatchQueue(label: identifierPrefix + "Downloader.Process"))
 
 extension FisherKitManager {
     // Handles item processing work on an own process queue.

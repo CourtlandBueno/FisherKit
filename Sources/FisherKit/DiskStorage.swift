@@ -141,7 +141,7 @@ public enum DiskStorage {
                     create: true)
             }
 
-            let cacheName = "fkcache" + config.name
+            let cacheName = identifierPrefix + "cache." + config.name
             directoryURL = config.cachePathBlock(url, cacheName)
 
             metaChangingQueue = DispatchQueue(label: cacheName)

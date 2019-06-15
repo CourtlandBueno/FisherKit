@@ -25,7 +25,7 @@
 //  THE SOFTWARE.
 
 import Foundation
-extension String: FisherKitCompatibleValue { }
+extension String: FisherKitCompatible { }
 #if canImport(CommonCrypto)
 import CommonCrypto
 

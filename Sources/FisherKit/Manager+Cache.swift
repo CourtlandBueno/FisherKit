@@ -116,7 +116,7 @@ extension FisherKitManager {
             self.diskStorage = diskStorage
             
             
-            let ioQueueName = "com.courtlandbueno.FisherKit.Cache.ioQueue.\(UUID().uuidString)"
+            let ioQueueName = identifierPrefix + "Cache.ioQueue.\(UUID().uuidString)"
             ioQueue = DispatchQueue(label: ioQueueName)
             
             #if !os(Linux)
