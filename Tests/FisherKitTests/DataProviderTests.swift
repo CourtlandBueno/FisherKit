@@ -8,7 +8,6 @@ import XCTest
 @testable import FisherKit
 
 class DataProviderTests: XCTestCase {
-    #if !os(Linux)
 
     func testLocalFileDataProvider() {
         let fm = FileManager.default
@@ -46,8 +45,5 @@ class DataProviderTests: XCTestCase {
         ("testLocalFileDataProvider", testLocalFileDataProvider),
         ("testBase64DataProvider", testBase64DataProvider)
     ]
-    #else
-    static var allTests: [(String, (FisherKitTests) -> () -> ())] = []
-    #endif
     
 }
