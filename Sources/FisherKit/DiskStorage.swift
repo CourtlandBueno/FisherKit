@@ -25,7 +25,9 @@
 //  THE SOFTWARE.
 
 import Foundation
-
+#if os(Linux)
+import ShellOut
+#endif
 public protocol CodableEncoder {
     func encode<T: Encodable>(_ value: T) throws -> Data
 }
@@ -120,19 +122,6 @@ public enum DiskStorage {
 
         let metaChangingQueue: DispatchQueue
         
-        private var keyStore: [URL : String] = [:] {
-            didSet {
-                do {
-                    onDidUpdateStoreMeta?(try allStoredKeyMeta())
-                    try serializeKeyStore()
-                } catch {
-                    print(error)
-                }
-            }
-        }
-        
-        public var onDidAddFileForKey: ((URL, String) -> Void)?
-        public var onDidUpdateStoreMeta: (([KeyStoreMeta]) -> Void)?
         /// Creates a disk storage with the given `DiskStorage.Config`.
         ///
         /// - Parameter config: The config used for this disk storage.
@@ -152,16 +141,13 @@ public enum DiskStorage {
                     create: true)
             }
 
-            let cacheName = "com.courtlandbueno.FisherKit.Cache." + config.name
+            let cacheName = "fkcache" + config.name
             directoryURL = config.cachePathBlock(url, cacheName)
 
             metaChangingQueue = DispatchQueue(label: cacheName)
 
             try prepareDirectory()
             
-            if config.storesOriginalKeys {
-                try deserializeKeyStore()
-            }
         }
         
         // Creates the storage folder.
@@ -190,7 +176,6 @@ public enum DiskStorage {
             let expiration = expiration ?? config.expiration
             // The expiration indicates that already expired, no need to store.
             guard !expiration.isExpired else { return }
-            
             let data: Data
             do {
                 data = try value.toData()
@@ -201,17 +186,20 @@ public enum DiskStorage {
             let fileURL = cacheFileURL(forKey: key)
 
             let now = Date()
-            let attributes: [FileAttributeKey : Any] = [
-                // The last access date.
-                .creationDate: now.fileAttributeDate,
-                // The estimated expiration date.
-                .modificationDate: expiration.estimatedExpirationSinceNow.fileAttributeDate
-            ]
-            if config.fileManager.createFile(atPath: fileURL.path, contents: data, attributes: attributes) {
-                if config.storesOriginalKeys {
-                    try updateKeyStore(fileURL: fileURL, key: key)
-                }
-            }
+            let modificationDate = expiration.estimatedExpirationSinceNow.fileAttributeDate
+            
+            #if os(Linux)
+                config.fileManager.createFile(atPath: fileURL.path, contents: data, attributes: nil)
+                try shellOut(to: "touch -md '\(modificationDate)' \(fileURL.path)")
+            #else 
+                let attributes: [FileAttributeKey : Any] = [
+                    // The last access date.
+                    .creationDate: now.fileAttributeDate,
+                    // The estimated expiration date.
+                    .modificationDate: modificationDate
+                ]
+                config.fileManager.createFile(atPath: fileURL.path, contents: data, attributes: attributes)
+            #endif
         }
         
         func value(forKey key: String) throws -> T? {
@@ -228,7 +216,13 @@ public enum DiskStorage {
 
             let meta: FileMeta
             do {
-                let resourceKeys: Set<URLResourceKey> = [.contentModificationDateKey, .creationDateKey]
+                let resourceKeys: Set<URLResourceKey>
+                #if os(Linux)
+                    resourceKeys = [.contentModificationDateKey, .contentAccessDateKey]
+                #else
+                    resourceKeys = [.contentModificationDateKey, .creationDateKey]
+                #endif
+                
                 meta = try FileMeta(fileURL: fileURL, resourceKeys: resourceKeys)
             } catch {
                 throw Error.invalidURLResource(error: error, key: key, url: fileURL)
@@ -271,11 +265,9 @@ public enum DiskStorage {
 
         func removeFile(at url: URL) throws {
             try config.fileManager.removeItem(at: url)
-            keyStore.removeValue(forKey: url)
         }
 
         func removeAll() throws {
-            keyStore.removeAll()
             try removeAll(skipCreatingDirectory: false)
         }
 
@@ -284,7 +276,6 @@ public enum DiskStorage {
             if !skipCreatingDirectory {
                 try prepareDirectory()
             }
-            keyStore.removeAll()
         }
 
         func cacheFileURL(forKey key: String) -> URL {
@@ -355,12 +346,20 @@ public enum DiskStorage {
 
             var size = try totalSize()
             if size < config.sizeLimit { return [] }
-
-            let propertyKeys: [URLResourceKey] = [
+            let propertyKeys: [URLResourceKey]
+            #if os(Linux)
+                propertyKeys = [
+                .isDirectoryKey,
+                .contentAccessDateKey,
+                .fileSizeKey
+            ]
+            #else
+                propertyKeys = [
                 .isDirectoryKey,
                 .creationDateKey,
                 .fileSizeKey
             ]
+            #endif
             let keys = Set(propertyKeys)
 
             let urls = try allFileURLs(for: propertyKeys)
@@ -400,76 +399,6 @@ public enum DiskStorage {
         }
     }
 }
-
-//MARK: - KeyStoreMeta
-public struct KeyStoreMeta: Equatable, Hashable {
-    public let fileURL: URL
-    public let key: String
-    public let size: Int
-    public let created: Date
-    public let modified: Date
-    
-}
-
-//MARK: - DiskStorage.Backend + KeyStore
-extension DiskStorage.Backend {
-    
-    fileprivate func updateKeyStore(fileURL: URL, key: String) throws {
-        let atChar = Character("@")
-        let formattedKey: String
-        
-        if key.contains(atChar) {
-            formattedKey = String(key.split(separator: Character("@")).first!)
-        } else {
-            formattedKey = key
-        }
-        //update delegate method
-        onDidAddFileForKey?(fileURL, formattedKey)
-        
-        keyStore[fileURL] = formattedKey
-    }
-    
-    fileprivate func serializeKeyStore() throws {
-        let keyStoreFileURL = directoryURL.appendingPathExtension("encodedKeyStore.plist")
-        let encodedKeyStore = try PropertyListEncoder().encode(keyStore)
-        try encodedKeyStore.write(to: keyStoreFileURL)
-    }
-    
-    fileprivate func deserializeKeyStore() throws {
-        let encodedKeyStoreURL = directoryURL.appendingPathExtension("encodedKeyStore.plist")
-        
-        if config.fileManager.fileExists(atPath: encodedKeyStoreURL.path) {
-            let data = try Data.init(contentsOf: encodedKeyStoreURL)
-            let decodedStore = try PropertyListDecoder().decode([URL:String].self, from: data)
-            keyStore = decodedStore
-        }
-    }
-    public func allStoredKeyMeta() throws -> [KeyStoreMeta] {
-        
-        let fileManager = config.fileManager
-        
-        guard let directoryEnumerator = fileManager.enumerator(
-            at: directoryURL, includingPropertiesForKeys: [], options: .skipsHiddenFiles) else
-        {
-            throw DiskStorage.Error.fileEnumeratorCreationFailed(url: directoryURL)
-        }
-        
-        guard let urls = directoryEnumerator.allObjects as? [URL] else {
-            throw DiskStorage.Error.invalidFileEnumeratorContent(url: directoryURL)
-        }
-        
-        return try urls.map({ fileURL in
-            let fileAttributes = try fileManager.attributesOfItem(atPath: fileURL.path)
-            return KeyStoreMeta(fileURL: fileURL,
-                                key: keyStore[fileURL] ?? "",
-                                size: (fileAttributes[.size]  as! Int),
-                                created: fileAttributes[.creationDate] as! Date,
-                                modified: fileAttributes[.modificationDate] as! Date)
-        })
-        
-    }
-}
-
 
 extension DiskStorage {
     /// Represents the config used in a `DiskStorage`.
@@ -513,7 +442,7 @@ extension DiskStorage {
             sizeLimit: UInt,
             fileManager: FileManager = .default,
             directory: URL? = nil,
-            storesOriginalKeys: Bool = true)
+            storesOriginalKeys: Bool = false)
         {
             self.name = name
             self.fileManager = fileManager
@@ -542,7 +471,7 @@ extension DiskStorage {
             let meta = try fileURL.resourceValues(forKeys: resourceKeys)
             self.init(
                 fileURL: fileURL,
-                lastAccessDate: meta.creationDate,
+                lastAccessDate: meta.contentAccessDate ?? meta.creationDate,
                 estimatedExpirationDate: meta.contentModificationDate,
                 isDirectory: meta.isDirectory ?? false,
                 fileSize: meta.fileSize ?? 0)
@@ -575,12 +504,18 @@ extension DiskStorage {
             
             let originalExpiration: StorageExpiration =
                 .seconds(lastEstimatedExpiration.timeIntervalSince(lastAccessDate))
+            let modificationDate = originalExpiration.estimatedExpirationSinceNow.fileAttributeDate
             let attributes: [FileAttributeKey : Any] = [
                 .creationDate: Date().fileAttributeDate,
-                .modificationDate: originalExpiration.estimatedExpirationSinceNow.fileAttributeDate
+                .modificationDate: modificationDate
             ]
-
-            try? fileManager.setAttributes(attributes, ofItemAtPath: url.path)
+            #if os(Linux)
+                try! shellOut(to: "touch -ca \(url.path)")
+                try! shellOut(to: "touch -cmd '\(modificationDate)' \(url.path)")
+            #else
+                try? fileManager.setAttributes(attributes, ofItemAtPath: url.path)
+            #endif
+            
         }
     }
 }

@@ -52,9 +52,7 @@ extension FisherKitWrapper where Base == String {
 import ShellOut
 extension FisherKitWrapper where Base == String {
     var md5: String {
-        guard let output = try? shellOut(to: "echo -n '\(base)' | md5sum") else {
-            return base
-        }
+        let output = try! shellOut(to: "echo -n '\(base)' | md5sum")
         let trimmed = output.trimmingCharacters(in: .init(charactersIn: "-")).trimmingCharacters(in: .whitespaces)
         return trimmed
     }

@@ -6,11 +6,11 @@ public func allTests() -> [XCTestCaseEntry] {
         testCase(FisherKitTests.allTests),
         testCase(FisherKitManagerTests.allTests),
         testCase(DataProviderTests.allTests),
+        testCase(StorageExpirationTests.allTests),
+        testCase(MemoryStorageTests.allTests),
         testCase(DiskStorageTests.allTests),
         testCase(ImageDrawingTests.allTests),
-        testCase(MemoryStorageTests.allTests),
         testCase(ProcessorTests.allTests),
-        testCase(StorageExpirationTests.allTests),
     ]
 }
 #endif
